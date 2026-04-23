@@ -47,7 +47,7 @@ export default function FeaturedCollections() {
         {categories.map((cat) => (
           <Link
             key={cat.id}
-            to={`/shop?category=${cat.id}`}
+            to={`/shop?gender=${cat.id}`}
             className="collection-card group relative aspect-[4/5] overflow-hidden rounded bg-[#0A0A0A] opacity-0 translate-y-10 transition-all duration-700"
             style={{ transitionProperty: 'opacity, transform' }}
           >

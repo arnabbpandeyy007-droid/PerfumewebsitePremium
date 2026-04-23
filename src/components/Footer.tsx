@@ -29,9 +29,9 @@ export default function Footer() {
             <h3 className="text-xs uppercase tracking-[0.15em] text-[#999] font-medium mb-6">Shop</h3>
             <ul className="space-y-3">
               {[
-                { to: '/shop?category=men', label: "Men's Perfumes" },
-                { to: '/shop?category=women', label: "Women's Perfumes" },
-                { to: '/shop?category=unisex', label: 'Unisex' },
+                { to: '/shop?gender=men', label: "Men's Perfumes" },
+                { to: '/shop?gender=women', label: "Women's Perfumes" },
+                { to: '/shop?gender=unisex', label: 'Unisex' },
                 { to: '/shop', label: 'Gift Sets' },
                 { to: '/shop', label: 'Attar & Oud' },
               ].map((link) => (

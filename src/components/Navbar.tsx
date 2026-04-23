@@ -26,8 +26,8 @@ export default function Navbar() {
 
   const navLinks = [
     { to: '/shop', label: 'Shop' },
-    { to: '/shop?category=men', label: 'Men' },
-    { to: '/shop?category=women', label: 'Women' },
+    { to: '/shop?gender=men', label: 'Men' },
+    { to: '/shop?gender=women', label: 'Women' },
     { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
   ];

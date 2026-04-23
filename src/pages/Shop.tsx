@@ -7,20 +7,37 @@ import { ChevronDown, SlidersHorizontal, X } from 'lucide-react';
 export default function Shop() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-
-  const categoryFilter = searchParams.get('category') || 'all';
   const searchQuery = searchParams.get('search') || '';
   const sortBy = searchParams.get('sort') || 'featured';
-  const selectedGenders = searchParams.getAll('gender');
+  
+  // Combine 'category' and 'gender' params for unified filtering
+  const selectedGenders = useMemo(() => {
+    const genders = searchParams.getAll('gender');
+    const category = searchParams.get('category');
+    const set = new Set(genders);
+    if (category && category !== 'all') set.add(category);
+    return Array.from(set);
+  }, [searchParams]);
+
   const selectedFamilies = searchParams.getAll('family');
   const selectedPriceRanges = searchParams.getAll('price');
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // Category filter
-    if (categoryFilter !== 'all') {
-      result = result.filter((p) => p.category === categoryFilter);
+    // Combined Gender/Category filter
+    if (selectedGenders.length > 0) {
+      result = result.filter((p) => {
+        // If the product category is explicitly selected
+        if (selectedGenders.includes(p.category)) return true;
+        
+        // If we're looking at "men" or "women", also show "unisex"
+        if (p.category === 'unisex' && (selectedGenders.includes('men') || selectedGenders.includes('women'))) {
+          return true;
+        }
+        
+        return false;
+      });
     }
 
     // Search filter
@@ -32,11 +49,6 @@ export default function Shop() {
           p.fragranceFamily.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q)
       );
-    }
-
-    // Gender filter
-    if (selectedGenders.length > 0) {
-      result = result.filter((p) => selectedGenders.includes(p.category));
     }
 
     // Fragrance family filter
@@ -75,17 +87,35 @@ export default function Shop() {
     }
 
     return result;
-  }, [categoryFilter, searchQuery, sortBy, selectedGenders, selectedFamilies, selectedPriceRanges]);
+  }, [searchQuery, sortBy, selectedGenders, selectedFamilies, selectedPriceRanges]);
 
   const toggleParam = (key: string, value: string) => {
-    const current = searchParams.getAll(key);
     const next = new URLSearchParams(searchParams);
-    next.delete(key);
-    if (current.includes(value)) {
-      current.filter((v) => v !== value).forEach((v) => next.append(key, v));
+    
+    if (key === 'gender' || key === 'category') {
+      const currentGenders = new Set(next.getAll('gender'));
+      const cat = next.get('category');
+      if (cat && cat !== 'all') currentGenders.add(cat);
+      
+      next.delete('gender');
+      next.delete('category');
+      
+      if (currentGenders.has(value)) {
+        currentGenders.delete(value);
+      } else {
+        currentGenders.add(value);
+      }
+      
+      currentGenders.forEach(g => next.append('gender', g));
     } else {
-      current.forEach((v) => next.append(key, v));
-      next.append(key, value);
+      const current = next.getAll(key);
+      next.delete(key);
+      if (current.includes(value)) {
+        current.filter((v) => v !== value).forEach((v) => next.append(key, v));
+      } else {
+        current.forEach((v) => next.append(key, v));
+        next.append(key, value);
+      }
     }
     setSearchParams(next);
   };
