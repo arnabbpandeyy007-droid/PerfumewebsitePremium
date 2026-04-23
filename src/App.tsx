@@ -11,10 +11,12 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import { Toaster } from 'sonner'
+import ScrollToTop from './components/ScrollToTop'
 
 export default function App() {
   return (
     <div className="min-h-screen bg-black text-neutral-100">
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
